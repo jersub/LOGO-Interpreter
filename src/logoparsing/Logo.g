@@ -7,6 +7,7 @@ tokens {
   AV = 'AV' ;
   TD = 'TD' ;
   TG = 'TG' ;
+  REC = 'REC';
 }
 @lexer::header {
   package logoparsing;
@@ -31,6 +32,7 @@ liste_instructions :
 instruction :
   ( AV^  
   | TD^
-  | TG^ ) 
+  | TG^
+  | REC^ ) 
   INT
 ;

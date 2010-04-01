@@ -55,6 +55,18 @@ public class Traceur {
 		posy = b;
 	}
 	
+	public void recule(double r) {
+		double a = posx - r * Math.cos(teta) ;
+		double b = posy + r * Math.sin(teta) ;
+		int x1 = toInt(posx);
+		int y1 = toInt(posy);
+		int x2 = toInt(a);
+		int y2 = toInt(b);
+		g2d.drawLine(x1,y1,x2,y2);
+		posx = a;
+		posy = b;
+	}
+	
 	public void td(double r) {
 		angle = (angle - toInt(r)) % 360;
 		setTeta();

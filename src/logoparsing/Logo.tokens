@@ -1,9 +1,11 @@
 TG=7
 TD=6
-WS=9
+WS=10
 AV=5
 PROGRAMME=4
-INT=8
+INT=9
+REC=8
 'TD'=6
 'AV'=5
 'TG'=7
+'REC'=8

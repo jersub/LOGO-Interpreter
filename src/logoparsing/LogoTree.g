@@ -28,4 +28,5 @@ instruction :
    ^(AV a = INT) {double m = Double.parseDouble($a.getText()); traceur.avance(m);}
  | ^(TD a = INT) {double m = Double.parseDouble($a.getText()); traceur.td(m);}
  | ^(TG a = INT) {double m = Double.parseDouble($a.getText()); traceur.tg(m);}
+ | ^(REC a = INT) {double m = Double.parseDouble($a.getText()); traceur.recule(m);}
 ;
