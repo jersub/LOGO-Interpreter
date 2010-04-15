@@ -91,6 +91,17 @@ public class Traceur {
     }
 
     /**
+     * Définit la position courante du traceur.
+     *
+     * @param x
+     * @param y
+     */
+    public void fixePosition(double x, double y) {
+        posx = x;
+        posy = y;
+    }
+
+    /**
      * Définit l'angle têta en radians à partir de l'angle définit en degrés.
      */
     private void setTeta() {

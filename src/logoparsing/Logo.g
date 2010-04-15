@@ -8,6 +8,7 @@ tokens {
   TD = 'TD' ;
   TG = 'TG' ;
   REC = 'REC';
+  FPOS = 'FPOS';
 }
 @lexer::header {
   package logoparsing;
@@ -35,4 +36,5 @@ instruction :
   | TG^
   | REC^ ) 
   INT
+  | FPOS^ INT INT
 ;
