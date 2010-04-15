@@ -80,12 +80,22 @@ public class Traceur {
         posy = b;
     }
 
-    public void td(double r) {
+    /**
+     * Tourne l'orientation du traceur du côté droit.
+     *
+     * @param r  l'angle de rotation en degrés
+     */
+    public void tourneDroite(double r) {
         angle = (angle - toInt(r)) % 360;
         setTeta();
     }
 
-    public void tg(double r) {
+    /**
+     * Tourne l'orientation du traceur du côté gauche.
+     *
+     * @param r  l'angle de rotation en degrés
+     */
+    public void tourneGauche(double r) {
         angle = (angle + toInt(r)) % 360;
         setTeta();
     }

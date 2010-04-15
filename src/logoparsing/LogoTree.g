@@ -26,8 +26,8 @@ options {
 ;
 instruction :
    ^(AV a = INT) {double m = Double.parseDouble($a.getText()); traceur.avance(m);}
- | ^(TD a = INT) {double m = Double.parseDouble($a.getText()); traceur.td(m);}
- | ^(TG a = INT) {double m = Double.parseDouble($a.getText()); traceur.tg(m);}
+ | ^(TD a = INT) {double m = Double.parseDouble($a.getText()); traceur.tourneDroite(m);}
+ | ^(TG a = INT) {double m = Double.parseDouble($a.getText()); traceur.tourneGauche(m);}
  | ^(REC a = INT) {double m = Double.parseDouble($a.getText()); traceur.recule(m);}
  | ^(FPOS a = INT b = INT) {double x = Double.parseDouble($a.getText()); double y = Double.parseDouble($b.getText()); traceur.fixePosition(x, y);}
 ;
