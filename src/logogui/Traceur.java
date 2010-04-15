@@ -112,6 +112,21 @@ public class Traceur {
     }
 
     /**
+     * Fixe le cap du traceur.
+     *
+     * 0   -> haut
+     * 90  -> gauche
+     * 180 -> bas
+     * 270 -> droite
+     *
+     * @param r  le cap en degrés
+     */
+    public void fixeCap(double r) {
+        angle = (90 + toInt(r)) % 360;
+        setTeta();
+    }
+
+    /**
      * Définit l'angle têta en radians à partir de l'angle définit en degrés.
      */
     private void setTeta() {

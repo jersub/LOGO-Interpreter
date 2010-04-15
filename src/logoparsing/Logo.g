@@ -4,11 +4,12 @@ options {
 }
 tokens {
   PROGRAMME;
-  AV = 'AV' ;
-  TD = 'TD' ;
-  TG = 'TG' ;
+  AV = 'AV';
+  TD = 'TD';
+  TG = 'TG';
   REC = 'REC';
   FPOS = 'FPOS';
+  FCAP = 'FCAP';
 }
 @lexer::header {
   package logoparsing;
@@ -34,7 +35,8 @@ instruction :
   ( AV^  
   | TD^
   | TG^
-  | REC^ ) 
+  | REC^
+  | FCAP^ )
   INT
   | FPOS^ INT INT
 ;
