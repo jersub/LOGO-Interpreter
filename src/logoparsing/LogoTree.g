@@ -31,4 +31,5 @@ instruction :
  | ^(REC a = INT) {double m = Double.parseDouble($a.getText()); traceur.recule(m);}
  | ^(FPOS a = INT b = INT) {double x = Double.parseDouble($a.getText()); double y = Double.parseDouble($b.getText()); traceur.fixePosition(x, y);}
  | ^(FCAP a = INT) {double m = Double.parseDouble($a.getText()); traceur.fixeCap(m);}
+ | ^(FCC a = INT) {int m = Integer.parseInt($a.getText()); traceur.couleur(m);}
 ;

@@ -10,6 +10,7 @@ tokens {
   REC = 'REC';
   FPOS = 'FPOS';
   FCAP = 'FCAP';
+  FCC = 'FCC';
 }
 @lexer::header {
   package logoparsing;
@@ -36,7 +37,8 @@ instruction :
   | TD^
   | TG^
   | REC^
-  | FCAP^ )
+  | FCAP^
+  | FCC^ )
   INT
   | FPOS^ INT INT
 ;

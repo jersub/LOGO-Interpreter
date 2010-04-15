@@ -1,5 +1,6 @@
 package logogui;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Graphics;
 
@@ -17,6 +18,16 @@ public class Traceur {
     private double posx = initx, posy = inity; // position courante
     private int angle = 90;
     private double teta;
+    private static Color couleurs[] = {
+        Color.BLACK,
+        Color.RED,
+        Color.GREEN,
+        Color.YELLOW,
+        Color.BLUE,
+        Color.MAGENTA,
+        Color.CYAN,
+        Color.WHITE
+    };
 
     /**
      * Constructeur.
@@ -124,6 +135,15 @@ public class Traceur {
     public void fixeCap(double r) {
         angle = (90 + toInt(r)) % 360;
         setTeta();
+    }
+
+    /**
+     * Définit la couleur du traceur.
+     *
+     * @param c  la valeur de la couleur
+     */
+    public void couleur(int c) {
+        g2d.setColor(couleurs[c % 8]);
     }
 
     /**
