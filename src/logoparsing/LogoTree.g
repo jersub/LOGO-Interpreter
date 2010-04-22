@@ -25,7 +25,7 @@ options {
      {Log.appendnl("Programme principal");}
 ;
 instruction :
-   ^(AV a = INT) {double m = Double.parseDouble($a.getText()); traceur.avance(m);}
+   ^(AV a = expression) {double m = Double.parseDouble($a.getText()); traceur.avance(m);}
  | ^(TD a = INT) {double m = Double.parseDouble($a.getText()); traceur.tourneDroite(m);}
  | ^(TG a = INT) {double m = Double.parseDouble($a.getText()); traceur.tourneGauche(m);}
  | ^(REC a = INT) {double m = Double.parseDouble($a.getText()); traceur.recule(m);}
@@ -35,3 +35,12 @@ instruction :
  | (LC) {traceur.setTrace(false);}
  | (BC) {traceur.setTrace(true);}
 ;
+	;
+expression returns [Double d] :
+  ^('+' a = INT b = INT) {i = Double.parseDouble($a.getText()) + Double.parseDouble($a.getText());}
+  //expression '+'^ a = exp1 {setVar(getVar() + Double.parseDouble($a.getText())));
+  | a = INT {i = Double.parseDouble($a.getText());}  
+;
+//exp1 :
+ // INT
+//;

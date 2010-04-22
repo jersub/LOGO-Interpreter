@@ -27,6 +27,7 @@ tokens {
  }
 }
 INT : ('0'..'9')+ ;
+ADD : ('+' | '-');	 
 WS  :   (' '|'\t'|('\r'? '\n'))+ { skip(); } ;
 
 programme : liste_instructions -> ^(PROGRAMME liste_instructions)
@@ -41,8 +42,15 @@ instruction :
   | REC^
   | FCAP^
   | FCC^ )
-  INT
-  | FPOS^ INT INT
+  expression
+  | FPOS^ expression expression
   | LC^
   | BC^
 ;
+expression :
+  INT ^'+' INT
+;
+exp1 :
+  INT
+;		
+	
