@@ -18,6 +18,7 @@ public class Traceur {
     private double posx = initx, posy = inity; // position courante
     private int angle = 90;
     private double teta;
+    private boolean trace = true;
     private static Color couleurs[] = {
         Color.BLACK,
         Color.RED,
@@ -56,6 +57,16 @@ public class Traceur {
     public void setGraphics(Graphics g) {
         g2d = (Graphics2D) g;
     }
+    
+    /**
+     * Définit si le traceur peut tracer.
+     * 
+     * @param val  vrai si le traceur doit être actif
+     */
+    public void setTrace(boolean val)
+	{
+		trace = val;
+	}
 
     /**
      * Trace en avant.
@@ -67,9 +78,13 @@ public class Traceur {
         double b = posy - r * Math.sin(teta);
         int x1 = toInt(posx);
         int y1 = toInt(posy);
-        int x2 = toInt(a);
-        int y2 = toInt(b);
-        g2d.drawLine(x1, y1, x2, y2);
+        
+        if (trace) {
+	        int x2 = toInt(a);
+	        int y2 = toInt(b);
+	        g2d.drawLine(x1, y1, x2, y2);
+        }
+        
         posx = a;
         posy = b;
     }
@@ -80,15 +95,7 @@ public class Traceur {
      * @param r  la longueur à tracer
      */
     public void recule(double r) {
-        double a = posx - r * Math.cos(teta);
-        double b = posy + r * Math.sin(teta);
-        int x1 = toInt(posx);
-        int y1 = toInt(posy);
-        int x2 = toInt(a);
-        int y2 = toInt(b);
-        g2d.drawLine(x1, y1, x2, y2);
-        posx = a;
-        posy = b;
+    	avance(-r);
     }
 
     /**
