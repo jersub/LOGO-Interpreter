@@ -13,6 +13,7 @@ tokens {
   FCC = 'FCC';
   LC = 'LC' ;
   BC = 'BC' ;
+  VE = 'VE';
 }
 @lexer::header {
   package logoparsing;
@@ -46,11 +47,12 @@ instruction :
   | FPOS^ expression expression
   | LC^
   | BC^
+  | VE^
 ;
 expression :
   INT ^'+' INT
 ;
 exp1 :
   INT
-;		
-	
+;
+

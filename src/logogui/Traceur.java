@@ -69,6 +69,26 @@ public class Traceur {
 	}
 
     /**
+     * Réinitialise le traceur.
+     *
+     * La vue du traceur est nettoyée, et la position courante est
+     * réinitialisée.
+     */
+    public void init() {
+        nettoyer();
+
+        posx = initx;
+        posy = inity;
+    }
+
+    /**
+     * Nettoie la vue du traceur.
+     */
+    public void nettoyer() {
+        g2d.clearRect(0, 0, 1000, 1000);
+    }
+
+    /**
      * Trace en avant.
      *
      * @param r  la longueur à tracer

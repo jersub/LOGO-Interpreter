@@ -34,6 +34,7 @@ instruction :
  | ^(FCC a = INT) {int m = Integer.parseInt($a.getText()); traceur.couleur(m);}
  | (LC) {traceur.setTrace(false);}
  | (BC) {traceur.setTrace(true);}
+ | VE {traceur.init();}
 ;
 	;
 expression returns [Double d] :
@@ -44,3 +45,4 @@ expression returns [Double d] :
 //exp1 :
  // INT
 //;
+
