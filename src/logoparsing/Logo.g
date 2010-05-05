@@ -18,6 +18,11 @@ tokens {
   OP_MOINS = '-' ;
   OP_MULT = '*' ;
   OP_DIV = '/' ;
+  CMP_EGAL = '=';
+  CMP_SUP = '>';
+  CMP_INF = '<';
+  CMP_SUP_EGAL = '>=';
+  CMP_INF_EGAL = '<=';
 }
 @lexer::header {
   package logoparsing;
@@ -51,6 +56,7 @@ instruction :
   | LC^
   | BC^
   | VE^
+  | 'TEST'^ exprBool
 ;
 expr :
   sumExpr ;
@@ -59,6 +65,12 @@ sumExpr:
 ;
 multExpr :
   atom ((OP_MULT^|OP_DIV^) atom)*
+;
+exprBool :
+  cmpBool
+;
+cmpBool	:
+  expr (CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr
 ;
 atom:
   INT | '('! expr ')'!
