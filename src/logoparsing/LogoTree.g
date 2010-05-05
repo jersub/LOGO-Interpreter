@@ -30,6 +30,7 @@ liste_instructions
 	;
 instruction
 	:	repete
+	|	tantque
 	|	si
 	|	^(AV x = expr) {traceur.avance($x.v);}
 	|	^(TD x = expr) {traceur.tourneDroite($x.v);}
@@ -71,6 +72,24 @@ repete
   		for (int i = 0; i < $a.v ; i++) {
 			push(mark_list);
 			bloc();
+			pop();
+		}
+		}
+	;
+tantque
+@init {
+	int mark_cond = 0;
+	int mark_list = 0;
+}
+  	:	^(TANTQUE ({mark_cond = input.mark();} a=exprBool) {mark_list = input.mark();} . )
+  		{
+  		boolean b = $a.v;
+  		while (b) {
+			push(mark_list);
+			bloc();
+			pop();
+			push(mark_cond);
+			b = exprBool();
 			pop();
 		}
 		}
