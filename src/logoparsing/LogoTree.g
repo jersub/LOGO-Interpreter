@@ -68,9 +68,9 @@ repete
   	:	^(REPETE a=expr {mark_list = input.mark();} . )
   		{
   		for (int i = 0; i < $a.v ; i++) {
-			((CommonTreeNodeStream)input).push(mark_list);
+			push(mark_list);
 			bloc();
-			((CommonTreeNodeStream)input).pop();
+			pop();
 		}
 		}
 	;
