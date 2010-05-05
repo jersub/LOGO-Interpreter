@@ -5,6 +5,8 @@ options {
 }
 tokens {
   PROGRAMME;
+  BLOC;
+  REPETE = 'REPETE';
   AV = 'AV';
   TD = 'TD';
   TG = 'TG';
@@ -49,19 +51,23 @@ programme : liste_instructions -> ^(PROGRAMME liste_instructions)
 liste_instructions :
   (instruction)+ 
 ;
+bloc :
+  '[' liste_instructions ']' -> ^(BLOC liste_instructions)
+;
 instruction :
-  ( AV^  
+  REPETE^ expr bloc
+| ( AV^  
   | TD^
   | TG^
   | REC^
   | FCAP^ )
   expr
-  | FPOS^ '['! expr expr ']'!
-  | FCC^ INT
-  | LC^
-  | BC^
-  | VE^
-  | 'TEST'^ exprBool
+| FPOS^ '['! expr expr ']'!
+| FCC^ INT
+| LC^
+| BC^
+| VE^
+| 'TEST'^ exprBool
 ;
 expr :
   sumExpr ;
