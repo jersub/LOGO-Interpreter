@@ -46,7 +46,7 @@ instruction :
   | REC^
   | FCAP^ )
   expr
-  | FPOS^ expr expr
+  | FPOS^ '['! expr expr ']'!
   | FCC^ INT
   | LC^
   | BC^
