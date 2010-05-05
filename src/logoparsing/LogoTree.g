@@ -53,4 +53,6 @@ exprBool returns [boolean v] :
 | ^(OP_OU b1=exprBool b2=exprBool) {$v = $b1.v || $b2.v;}
 | ^(OP_ET b1=exprBool b2=exprBool) {$v = $b1.v && $b2.v;}
 | a=expr {$v = $a.v != 0;}
+| VRAI {$v = true;}
+| FAUX {$v = false;}
 ;

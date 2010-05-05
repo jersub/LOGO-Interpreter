@@ -39,8 +39,10 @@ tokens {
    return valide;
  }
 }
-INT : ('0'..'9')+ ;	 
-WS  :   (' '|'\t'|('\r'? '\n'))+ { skip(); } ;
+INT : ('0'..'9')+ ;
+VRAI : 'VRAI'|'vrai';
+FAUX : 'FAUX'|'faux'; 
+WS : (' '|'\t'|('\r'? '\n'))+ { skip(); } ;
 
 programme : liste_instructions -> ^(PROGRAMME liste_instructions)
 ;
@@ -82,6 +84,8 @@ atom:
   INT | '('! expr ')'!
 ;
 atomBool :
-  expr ((CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr)?
+  VRAI
+| FAUX
+| expr ((CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr)?
 | '('! exprBool ')'!
 ;
