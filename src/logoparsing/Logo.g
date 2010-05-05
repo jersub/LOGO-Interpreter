@@ -14,6 +14,10 @@ tokens {
   LC = 'LC' ;
   BC = 'BC' ;
   VE = 'VE';
+  PLUS = '+' ;
+  MOINS = '-' ;
+  MULT = '*' ;
+  DIV = '/' ;
 }
 @lexer::header {
   package logoparsing;
@@ -27,8 +31,7 @@ tokens {
    return valide;
  }
 }
-INT : ('0'..'9')+ ;
-ADD : ('+' | '-');	 
+INT : ('0'..'9')+ ;	 
 WS  :   (' '|'\t'|('\r'? '\n'))+ { skip(); } ;
 
 programme : liste_instructions -> ^(PROGRAMME liste_instructions)
@@ -41,18 +44,22 @@ instruction :
   | TD^
   | TG^
   | REC^
-  | FCAP^
-  | FCC^ )
-  expression
-  | FPOS^ expression expression
+  | FCAP^ )
+  expr
+  | FPOS^ expr expr
+  | FCC^ INT
   | LC^
   | BC^
   | VE^
 ;
-expression :
-  INT ^'+' INT
+expr :
+  sumExpr ;
+sumExpr:
+  multExpr ((PLUS^|MOINS^) multExpr)*
 ;
-exp1 :
-  INT
+multExpr :
+  atom ((MULT^|DIV^) atom)*
 ;
-
+atom:
+  INT | '('! expr ')'!
+;
