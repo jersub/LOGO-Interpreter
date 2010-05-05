@@ -37,9 +37,9 @@ instruction :
  | VE {traceur.init();}
 ;
 expr returns [double v] :
-  ^(PLUS x=expr y=expr) {$v = $x.v + $y.v;}
-| ^(MOINS x=expr y=expr) {$v = $x.v - $y.v;}
-| ^(MULT x=expr y=expr) {$v = $x.v * $y.v;}
-| ^(DIV x=expr y=expr) {$v = $x.v / $y.v;}
+  ^(OP_PLUS x=expr y=expr) {$v = $x.v + $y.v;}
+| ^(OP_MOINS x=expr y=expr) {$v = $x.v - $y.v;}
+| ^(OP_MULT x=expr y=expr) {$v = $x.v * $y.v;}
+| ^(OP_DIV x=expr y=expr) {$v = $x.v / $y.v;}
 | a = INT {$v = Double.parseDouble($a.getText());}
 ;

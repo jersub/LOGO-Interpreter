@@ -14,10 +14,10 @@ tokens {
   LC = 'LC' ;
   BC = 'BC' ;
   VE = 'VE';
-  PLUS = '+' ;
-  MOINS = '-' ;
-  MULT = '*' ;
-  DIV = '/' ;
+  OP_PLUS = '+' ;
+  OP_MOINS = '-' ;
+  OP_MULT = '*' ;
+  OP_DIV = '/' ;
 }
 @lexer::header {
   package logoparsing;
@@ -55,10 +55,10 @@ instruction :
 expr :
   sumExpr ;
 sumExpr:
-  multExpr ((PLUS^|MOINS^) multExpr)*
+  multExpr ((OP_PLUS^|OP_MOINS^) multExpr)*
 ;
 multExpr :
-  atom ((MULT^|DIV^) atom)*
+  atom ((OP_MULT^|OP_DIV^) atom)*
 ;
 atom:
   INT | '('! expr ')'!
