@@ -7,6 +7,7 @@ tokens {
 	PROGRAMME;
 	BLOC;
 	REPETE = 'REPETE';
+	SI = 'SI';
 	AV = 'AV';
 	TD = 'TD';
 	TG = 'TG';
@@ -55,6 +56,7 @@ bloc	:	'[' liste_instructions ']' -> ^(BLOC liste_instructions)
 	;
 instruction
 	:	REPETE^ expr bloc
+	|	SI^ exprBool bloc bloc?
 	|	( AV^ |	TD^ | TG^ | REC^ | FCAP^ ) expr
 	|	FPOS^ '['! expr expr ']'!
 	|	FCC^ INT

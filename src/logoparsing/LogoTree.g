@@ -30,6 +30,7 @@ liste_instructions
 	;
 instruction
 	:	repete
+	|	si
 	|	^(AV x = expr) {traceur.avance($x.v);}
 	|	^(TD x = expr) {traceur.tourneDroite($x.v);}
 	|	^(TG x = expr) {traceur.tourneGauche($x.v);}
@@ -69,6 +70,19 @@ repete
   		{
   		for (int i = 0; i < $a.v ; i++) {
 			push(mark_list);
+			bloc();
+			pop();
+		}
+		}
+	;
+si
+@init {
+	int mark_list = -1;
+}
+  	:	^(SI b=exprBool {if ($b.v) mark_list = input.mark();} . ({if (!$b.v) mark_list = input.mark();} .)?)
+  		{
+  		if (mark_list != -1) {
+  			push(mark_list);
 			bloc();
 			pop();
 		}
