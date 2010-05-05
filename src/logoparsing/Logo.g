@@ -1,6 +1,7 @@
 grammar Logo;
 options {
   output = AST;
+  backtrack = true;
 }
 tokens {
   PROGRAMME;
@@ -18,6 +19,8 @@ tokens {
   OP_MOINS = '-' ;
   OP_MULT = '*' ;
   OP_DIV = '/' ;
+  OP_ET = '&' ;
+  OP_OU = '|' ;
   CMP_EGAL = '=';
   CMP_SUP = '>';
   CMP_INF = '<';
@@ -67,11 +70,18 @@ multExpr :
   atom ((OP_MULT^|OP_DIV^) atom)*
 ;
 exprBool :
-  cmpBool
+  exprOu
 ;
-cmpBool	:
-  expr (CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr
+exprOu :
+  exprEt (OP_OU^ exprEt)*
+;
+exprEt :
+  atomBool (OP_ET^ atomBool)*
 ;
 atom:
   INT | '('! expr ')'!
+;
+atomBool :
+  expr ((CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr)?
+| '('! exprBool ')'!
 ;

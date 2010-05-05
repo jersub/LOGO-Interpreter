@@ -50,4 +50,7 @@ exprBool returns [boolean v] :
 | ^(CMP_INF x=expr y=expr) {$v = $x.v < $y.v;}
 | ^(CMP_SUP_EGAL x=expr y=expr) {$v = $x.v >= $y.v;}
 | ^(CMP_INF_EGAL x=expr y=expr) {$v = $x.v <= $y.v;}
+| ^(OP_OU b1=exprBool b2=exprBool) {$v = $b1.v || $b2.v;}
+| ^(OP_ET b1=exprBool b2=exprBool) {$v = $b1.v && $b2.v;}
+| a=expr {$v = $a.v != 0;}
 ;
