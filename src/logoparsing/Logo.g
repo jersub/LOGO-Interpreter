@@ -11,7 +11,6 @@ tokens {
 	SI = 'SI';
 	LOCALE = 'LOCALE';
 	DONNE = 'DONNE';
-	ECRIS = 'ECRIS';
 	AV = 'AV';
 	TD = 'TD';
 	TG = 'TG';
@@ -33,24 +32,34 @@ tokens {
 	CMP_INF = '<';
 	CMP_SUP_EGAL = '>=';
 	CMP_INF_EGAL = '<=';
+	ECRIS = 'ECRIS';
+	ECRIS_CHAINE;
+	ECRIS_VAR;
+	SQRT = 'SQRT';
+	SIN = 'SIN';
+	COS = 'COS';
 }
 @lexer::header {
 	package logoparsing;
 }
 @header {
 	package logoparsing;
+	import java.util.TreeSet;
+	import logogui.Log;
 }
 @members {
 	boolean valide = true;
 	public boolean getValide(){
 		return valide;
 	}
+	TreeSet<String> vars = new TreeSet<String>();
 }
-INT	:	('0'..'9')+ ;
+INT	:	('0'..'9')+;
 VRAI	:	'VRAI'|'vrai';
 FAUX	:	'FAUX'|'faux';
-ID	:	('a'..'z'|'A'..'Z')('0'..'9'|'a'..'z'|'A'..'Z')*; 
+ID	:	('a'..'z'|'A'..'Z')('0'..'9'|'a'..'z'|'A'..'Z')*;
 WS	:	(' '|'\t'|('\r'? '\n'))+ { skip(); } ;
+CHAINE	:	('0'..'9'|'a'..'z'|'A'..'Z')+;
 programme
 	:	liste_instructions -> ^(PROGRAMME liste_instructions)
 	;
@@ -64,9 +73,8 @@ instruction
 	|	REPETE^ expr bloc
 	|	TANTQUE^ exprBool bloc
 	|	SI^ exprBool bloc bloc?
-	|	LOCALE^ '"'! ID
-	|	DONNE^ '"'! ID INT
-	|	ECRIS^ ':'! ID
+	|	LOCALE^ a = id_ecriture {vars.add($a.s);}
+	|	DONNE^ a = id_ecriture expr {vars.add($a.s);}
 	|	( AV^ |	TD^ | TG^ | REC^ | FCAP^ ) expr
 	|	FPOS^ '['! expr expr ']'!
 	|	FCC^ INT
@@ -74,6 +82,9 @@ instruction
 	|	BC^
 	|	VE^
 	|	'TEST'^ exprBool
+	|	ECRIS chaine -> ^(ECRIS_CHAINE chaine)
+	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
+	|	ECRIS^ expr
 	;
 expr	:	sumExpr
 	;
@@ -87,10 +98,22 @@ exprOu	:	exprEt (OP_OU^ exprEt)*
 	;
 exprEt	:	atomBool (OP_ET^ atomBool)*
 	;
-atom	:	INT | '('! expr ')'!
+atom	:	id_lecture
+	|	INT
+	|	'('! expr ')'!
+	|	SQRT^ expr
+	|	COS^ expr
+	|	SIN^ expr
 	;
 atomBool:	VRAI
 	|	FAUX
 	|	expr ((CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr)?
 	|	'('! exprBool ')'!
+	;
+chaine	:	'"'! CHAINE;
+id_lecture
+	:	':'! a = ID { if (!vars.contains($a.getText())) {valide = false; Log.appendnl("La variable "+$a.getText()+" n'a pas ete declaree.");}}
+	;
+id_ecriture returns [String s]
+	:	'"'! a = ID {$s = $a.getText();}
 	;

@@ -12,6 +12,8 @@ options {
 @members {
 	Traceur traceur;
 	int level = 0;
+	HashMap<String,String> globalVars = new HashMap<String,String>();
+	
 	public void initialize(java.awt.Graphics g) {
 		traceur = Traceur.getInstance();
 		traceur.setGraphics(g);
@@ -29,6 +31,7 @@ options {
 				return;
 			}
 		}
+		globalVars.put(key,value);
 	}
 	private String value(String key) {
 		for (int s = $bloc.size()-1; s>=0 ; s--) {
@@ -36,10 +39,8 @@ options {
 			if ( v != null)
 				return v;
 		}
-		return null;
+		return globalVars.containsKey(key) ? globalVars.get(key) : null;
 	}
-
-	
 }
 prog	:	^(PROGRAMME liste_instructions) {Log.appendnl("Programme principal");}
 	;
@@ -61,11 +62,14 @@ liste_instructions
 	;
 instruction
 	:	bloc
+	|	^(ECRIS x = expr){Log.appendnl(Double.toString(x));}
+	|	^(ECRIS_VAR a = ID){Log.appendnl(value($a.getText()));}
+	|	^(ECRIS_CHAINE str = CHAINE){Log.appendnl($str.getText());}
 	|	repete
 	|	tantque
 	|	si
-	|	^(LOCALE a=ID) {$bloc::var.put($a.getText(), "---"); Log.appendnl(value($a.getText()));}
-	|	^(DONNE a=ID x=expr) {store($a.getText(), Double.toString($x.v)); Log.appendnl(value($a.getText()));}
+	|	^(LOCALE a=ID) {$bloc::var.put($a.getText(), "---");}
+	|	^(DONNE a=ID x=expr) {store($a.getText(), Double.toString($x.v));}
 	|	^(AV x = expr) {traceur.avance($x.v);}
 	|	^(TD x = expr) {traceur.tourneDroite($x.v);}
 	|	^(TG x = expr) {traceur.tourneGauche($x.v);}
@@ -84,6 +88,10 @@ expr returns [double v]
 	|	^(OP_MULT x=expr y=expr) {$v = $x.v * $y.v;}
 	|	^(OP_DIV x=expr y=expr) {$v = $x.v / $y.v;}
 	|	a = INT {$v = Double.parseDouble($a.getText());}
+	|	b = ID {$v = Double.parseDouble(value($b.getText()));}
+	|	^(SQRT x = expr) {$v = Math.sqrt(x);}
+	|	^(COS x = expr) {$v = Math.cos(x);}
+	|	^(SIN x = expr) {$v = Math.sin(x);}
 ;
 exprBool returns [boolean v]
 	:	^(CMP_EGAL x=expr y=expr) {$v = $x.v == $y.v;}
