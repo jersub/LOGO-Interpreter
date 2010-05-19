@@ -9,6 +9,9 @@ tokens {
 	REPETE = 'REPETE';
 	TANTQUE = 'TANTQUE';
 	SI = 'SI';
+	LOCALE = 'LOCALE';
+	DONNE = 'DONNE';
+	ECRIS = 'ECRIS';
 	AV = 'AV';
 	TD = 'TD';
 	TG = 'TG';
@@ -45,7 +48,8 @@ tokens {
 }
 INT	:	('0'..'9')+ ;
 VRAI	:	'VRAI'|'vrai';
-FAUX	:	'FAUX'|'faux'; 
+FAUX	:	'FAUX'|'faux';
+ID	:	('a'..'z'|'A'..'Z')('0'..'9'|'a'..'z'|'A'..'Z')*; 
 WS	:	(' '|'\t'|('\r'? '\n'))+ { skip(); } ;
 programme
 	:	liste_instructions -> ^(PROGRAMME liste_instructions)
@@ -56,9 +60,13 @@ liste_instructions
 bloc	:	'[' liste_instructions ']' -> ^(BLOC liste_instructions)
 	;
 instruction
-	:	REPETE^ expr bloc
+	:	bloc
+	|	REPETE^ expr bloc
 	|	TANTQUE^ exprBool bloc
 	|	SI^ exprBool bloc bloc?
+	|	LOCALE^ '"'! ID
+	|	DONNE^ '"'! ID INT
+	|	ECRIS^ ':'! ID
 	|	( AV^ |	TD^ | TG^ | REC^ | FCAP^ ) expr
 	|	FPOS^ '['! expr expr ']'!
 	|	FCC^ INT

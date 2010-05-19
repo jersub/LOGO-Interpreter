@@ -7,9 +7,11 @@ options {
 	package logoparsing;
 	import logogui.Traceur;
 	import logogui.Log;
+	import java.util.HashMap;
 }
 @members {
 	Traceur traceur;
+	int level = 0;
 	public void initialize(java.awt.Graphics g) {
 		traceur = Traceur.getInstance();
 		traceur.setGraphics(g);
@@ -20,18 +22,50 @@ options {
 	public void pop() {
 		((CommonTreeNodeStream)input).pop();
 	}
+	private void store(String key,String value) {
+		for (int s = $bloc.size()-1; s>=0 ; s--) {
+			if ($bloc[s]::var.get(key) != null) {
+				$bloc[s]::var.put(key,value);
+				return;
+			}
+		}
+	}
+	private String value(String key) {
+		for (int s = $bloc.size()-1; s>=0 ; s--) {
+			String v = $bloc[s]::var.get(key);
+			if ( v != null)
+				return v;
+		}
+		return null;
+	}
+
+	
 }
 prog	:	^(PROGRAMME liste_instructions) {Log.appendnl("Programme principal");}
 	;
-bloc	:	^(BLOC liste_instructions)
+bloc
+scope {
+	HashMap<String,String> var;
+}
+@init {
+	$bloc::var = new HashMap<String,String>();
+	level++;
+}
+@after {
+	level--;
+}
+	:	^(BLOC liste_instructions)
 	;
 liste_instructions
 	:	(instruction)+
 	;
 instruction
-	:	repete
+	:	bloc
+	|	repete
 	|	tantque
 	|	si
+	|	^(LOCALE a=ID) {$bloc::var.put($a.getText(), "---"); Log.appendnl(value($a.getText()));}
+	|	^(DONNE a=ID x=expr) {store($a.getText(), Double.toString($x.v)); Log.appendnl(value($a.getText()));}
 	|	^(AV x = expr) {traceur.avance($x.v);}
 	|	^(TD x = expr) {traceur.tourneDroite($x.v);}
 	|	^(TG x = expr) {traceur.tourneGauche($x.v);}
