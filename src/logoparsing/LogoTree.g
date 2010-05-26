@@ -66,7 +66,7 @@ instruction
 	:	bloc
 	|	^(ECRIS x = expr){Log.appendnl(Double.toString(x));}
 	|	^(ECRIS_VAR a = ID){Log.appendnl(value($a.getText()));}
-	|	^(ECRIS_CHAINE str = CHAINE){Log.appendnl($str.getText());}
+	|	^(ECRIS_CHAINE str = ID){Log.appendnl($str.getText());}
 	|	repete
 	|	tantque
 	|	si

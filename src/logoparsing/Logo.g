@@ -61,7 +61,6 @@ VRAI	:	'VRAI'|'vrai';
 FAUX	:	'FAUX'|'faux';
 ID	:	('a'..'z'|'A'..'Z')('0'..'9'|'a'..'z'|'A'..'Z')*;
 WS	:	(' '|'\t'|('\r'? '\n'))+ { skip(); } ;
-CHAINE	:	('0'..'9'|'a'..'z'|'A'..'Z')+;
 programme
 	:	liste_instructions -> ^(PROGRAMME liste_instructions)
 	;
@@ -83,7 +82,7 @@ instruction
 	|	LC^
 	|	BC^
 	|	VE^
-	|	ECRIS chaine -> ^(ECRIS_CHAINE chaine)
+	|	ECRIS '"' ID -> ^(ECRIS_CHAINE ID)
 	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
 	|	ECRIS^ expr
 	|	procedure
@@ -113,7 +112,6 @@ atomBool:	VRAI
 	|	expr ((CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr)?
 	|	'('! exprBool ')'!
 	;
-chaine	:	'"'! CHAINE;
 id_lecture
 	:	':'! a = ID { if (!vars.contains($a.getText())) {valide = false; Log.appendnl("La variable "+$a.getText()+" n'a pas ete declaree.");}}
 	;
