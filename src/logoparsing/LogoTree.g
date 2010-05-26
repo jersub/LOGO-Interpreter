@@ -15,6 +15,7 @@ options {
 	int level = 0;
 	int compteur;
 	String procedureName;
+	String lastReturnValue;
 	HashMap<String,String> globalVars = new HashMap<String,String>();
 	TreeMap<String,Integer> procedures = new TreeMap<String,Integer>();
 	TreeMap<String,VarProcedureStorer> procedureVars = new TreeMap<String,VarProcedureStorer>();
@@ -186,15 +187,21 @@ exec returns [String r]
 			push(mark_list);
 			push(procedures.get($a.getText()));
 			bloc();
+			if (lastReturnValue == null) {
+				pop();
+			}
+			else {
+				r = lastReturnValue;
+				lastReturnValue = null;
+			}
 			pop();
 		}
 	;
 arg_exec:	x = expr {procedureVars.get(procedureName).initVar(compteur++, String.valueOf($x.v));}
 	|	s = chaine {procedureVars.get(procedureName).initVar(compteur++, $s.s);}
 	;
-ret returns [String r]
-	:	^(RET
-		(	x = expr {r = String.valueOf($x.v);}
-		|	s = chaine {r = $s.s;}))
+ret	:	^(RET
+		(	x = expr {lastReturnValue = String.valueOf($x.v);}
+		|	s = chaine {lastReturnValue = $s.s;}))
 		{pop();}
 	;
