@@ -38,6 +38,8 @@ tokens {
 	SQRT = 'SQRT';
 	SIN = 'SIN';
 	COS = 'COS';
+	POUR = 'POUR';
+	FIN = 'FIN';
 }
 @lexer::header {
 	package logoparsing;
@@ -85,6 +87,7 @@ instruction
 	|	ECRIS chaine -> ^(ECRIS_CHAINE chaine)
 	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
 	|	ECRIS^ expr
+	|	procedure
 	;
 expr	:	sumExpr
 	;
@@ -116,4 +119,7 @@ id_lecture
 	;
 id_ecriture returns [String s]
 	:	'"'! a = ID {$s = $a.getText();}
+	;
+procedure
+	:	POUR ID id_lecture* liste_instructions FIN -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
 	;
