@@ -33,7 +33,6 @@ tokens {
 	CMP_SUP_EGAL = '>=';
 	CMP_INF_EGAL = '<=';
 	ECRIS = 'ECRIS';
-	ECRIS_CHAINE;
 	ECRIS_VAR;
 	SQRT = 'SQRT';
 	SIN = 'SIN';
@@ -85,9 +84,7 @@ instruction
 	|	LC^
 	|	BC^
 	|	VE^
-	|	ECRIS '"' ID -> ^(ECRIS_CHAINE ID)
-	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
-	|	ECRIS^ expr
+	|	ecris
 	|	procedure
 	|	exec
 	|	ret
@@ -125,6 +122,9 @@ id_lecture
 	;
 id_ecriture returns [String s]
 	:	'"'! a = ID {$s = $a.getText();}
+	;
+ecris	:	ECRIS^ (chaine|expr)
+	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
 	;
 procedure
 	:	POUR a = ID (':' b = ID {vars.add($b.getText());})* {procedures.add($a.getText());} liste_instructions FIN -> ^(POUR ID ID* ^(BLOC liste_instructions))

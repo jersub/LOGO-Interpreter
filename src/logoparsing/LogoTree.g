@@ -77,9 +77,7 @@ liste_instructions
 	;
 instruction
 	:	bloc
-	|	^(ECRIS x = expr){Log.appendnl(Double.toString(x));}
-	|	^(ECRIS_VAR a = ID){Log.appendnl(value($a.getText()));}
-	|	^(ECRIS_CHAINE str = ID){Log.appendnl($str.getText());}
+	|	ecris
 	|	repete
 	|	tantque
 	|	si
@@ -125,6 +123,11 @@ exprBool returns [boolean v]
 	;
 chaine returns [String s]
 	:	^(CHAINE a = ID) {s = $a.getText();}
+	;
+ecris	:	^(ECRIS
+		(	x = expr {Log.appendnl(Double.toString(x));}
+		|	s = chaine {Log.appendnl($s.s);}))
+	|	^(ECRIS_VAR a = ID) {Log.appendnl(value($a.getText()));}
 	;
 repete
 @init {
