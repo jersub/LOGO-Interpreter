@@ -179,11 +179,12 @@ arg_dec	:	a = ID {procedureVars.get(procedureName).addVar($a.getText());}
 exec returns [String r]
 @init {
 	compteur = 1;
+	int mark_list = 0;
 }
-	:	^(a = ID {procedureName = $a.getText();} arg_exec*)
+	:	^(a = ID {procedureName = $a.getText();} arg_exec* {mark_list = input.mark();})
 		{
-			int mark_list = procedures.get($a.getText());
 			push(mark_list);
+			push(procedures.get($a.getText()));
 			bloc();
 			pop();
 		}
@@ -192,5 +193,8 @@ arg_exec:	x = expr {procedureVars.get(procedureName).initVar(compteur++, String.
 	|	s = chaine {procedureVars.get(procedureName).initVar(compteur++, $s.s);}
 	;
 ret returns [String r]
-	:	^(RET (x = expr {r = String.valueOf($x.v);}|s = chaine {r = $s.s;})) {consumeUntil(input, Token.UP);}
+	:	^(RET
+		(	x = expr {r = String.valueOf($x.v);}
+		|	s = chaine {r = $s.s;}))
+		{pop();}
 	;
