@@ -106,6 +106,7 @@ expr returns [double v]
 	|	^(OP_DIV x=expr y=expr) {$v = $x.v / $y.v;}
 	|	a = INT {$v = Double.parseDouble($a.getText());}
 	|	b = ID {$v = Double.parseDouble(value($b.getText()));}
+	|	r = exec {$v = Double.parseDouble($r.r);}
 	|	^(SQRT x = expr) {$v = Math.sqrt(x);}
 	|	^(COS x = expr) {$v = Math.cos(x);}
 	|	^(SIN x = expr) {$v = Math.sin(x);}

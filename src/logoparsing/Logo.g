@@ -107,9 +107,11 @@ exprEt	:	atomBool (OP_ET^ atomBool)*
 atom	:	id_lecture
 	|	INT
 	|	'('! expr ')'!
+	|	exec
 	|	SQRT^ expr
 	|	COS^ expr
 	|	SIN^ expr
+
 	;
 atomBool:	VRAI
 	|	FAUX
