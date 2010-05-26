@@ -96,6 +96,7 @@ instruction
 	|	VE {traceur.init();}
 	|	procedure
 	|	exec
+	|	ret
 	;
 expr returns [double v]
 	:	^(OP_PLUS x=expr y=expr) {$v = $x.v + $y.v;}
@@ -175,7 +176,7 @@ procedure
 	;
 arg_dec	:	a = ID {procedureVars.get(procedureName).addVar($a.getText());}
 	;
-exec
+exec returns [String r]
 @init {
 	compteur = 1;
 }
@@ -189,4 +190,7 @@ exec
 	;
 arg_exec:	x = expr {procedureVars.get(procedureName).initVar(compteur++, String.valueOf($x.v));}
 	|	s = chaine {procedureVars.get(procedureName).initVar(compteur++, $s.s);}
+	;
+ret returns [String r]
+	:	^(RET (x = expr {r = String.valueOf($x.v);}|s = chaine {r = $s.s;})) {consumeUntil(input, Token.UP);}
 	;

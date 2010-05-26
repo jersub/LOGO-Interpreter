@@ -41,6 +41,7 @@ tokens {
 	POUR = 'POUR';
 	FIN = 'FIN';
 	CHAINE;
+	RET = 'RET';
 }
 @lexer::header {
 	package logoparsing;
@@ -89,6 +90,7 @@ instruction
 	|	ECRIS^ expr
 	|	procedure
 	|	exec
+	|	ret
 	;
 expr	:	sumExpr
 	;
@@ -127,4 +129,6 @@ procedure
 	;
 exec	:	a = ID^ { if (!procedures.contains($a.getText())) {valide = false; Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");}}
 		((expr | id_lecture | chaine))*
+	;
+ret	:	RET^ (expr|chaine)
 	;
