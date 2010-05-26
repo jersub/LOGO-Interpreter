@@ -120,7 +120,7 @@ id_ecriture returns [String s]
 	:	'"'! a = ID {$s = $a.getText();}
 	;
 procedure
-	:	POUR a = ID id_lecture* liste_instructions FIN {procedures.add($a.getText());} -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
+	:	POUR a = ID id_lecture* {procedures.add($a.getText());} liste_instructions FIN -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
 	;
 exec	:	a = ID { if (!procedures.contains($a.getText())) {valide = false; Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");}}
 	;
