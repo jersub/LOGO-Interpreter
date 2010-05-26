@@ -40,6 +40,7 @@ tokens {
 	COS = 'COS';
 	POUR = 'POUR';
 	FIN = 'FIN';
+	CHAINE;
 }
 @lexer::header {
 	package logoparsing;
@@ -113,6 +114,8 @@ atomBool:	VRAI
 	|	expr ((CMP_EGAL^|CMP_SUP^|CMP_INF^|CMP_SUP_EGAL^|CMP_INF_EGAL^) expr)?
 	|	'('! exprBool ')'!
 	;
+chaine	:	'"' ID -> ^(CHAINE ID)
+	;
 id_lecture
 	:	':'! a = ID { if (!vars.contains($a.getText())) {valide = false; Log.appendnl("La variable "+$a.getText()+" n'a pas ete declaree.");}}
 	;
@@ -120,7 +123,8 @@ id_ecriture returns [String s]
 	:	'"'! a = ID {$s = $a.getText();}
 	;
 procedure
-	:	POUR a = ID id_lecture* {procedures.add($a.getText());} liste_instructions FIN -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
+	:	POUR a = ID (':' b = ID {vars.add($b.getText());})* {procedures.add($a.getText());} liste_instructions FIN -> ^(POUR ID ID* ^(BLOC liste_instructions))
 	;
-exec	:	a = ID { if (!procedures.contains($a.getText())) {valide = false; Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");}}
+exec	:	a = ID^ { if (!procedures.contains($a.getText())) {valide = false; Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");}}
+		((expr | id_lecture | chaine))*
 	;

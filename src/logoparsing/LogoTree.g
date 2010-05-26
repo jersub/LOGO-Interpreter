@@ -13,8 +13,11 @@ options {
 @members {
 	Traceur traceur;
 	int level = 0;
+	int compteur;
+	String procedureName;
 	HashMap<String,String> globalVars = new HashMap<String,String>();
 	TreeMap<String,Integer> procedures = new TreeMap<String,Integer>();
+	TreeMap<String,VarProcedureStorer> procedureVars = new TreeMap<String,VarProcedureStorer>();
 	
 	public void initialize(java.awt.Graphics g) {
 		traceur = Traceur.getInstance();
@@ -53,6 +56,15 @@ scope {
 @init {
 	$bloc::var = new HashMap<String,String>();
 	level++;
+	
+	if (procedureName != null) {
+		VarProcedureStorer s = procedureVars.get(procedureName);
+		for (String varName : s.getVarNames()) {
+			$bloc::var.put(varName, s.getValue(varName));
+		}
+		
+		procedureName = null;
+	}
 }
 @after {
 	level--;
@@ -108,6 +120,9 @@ exprBool returns [boolean v]
 	|	VRAI {$v = true;}
 	|	FAUX {$v = false;}
 	;
+chaine returns [String s]
+	:	^(CHAINE a = ID) {s = $a.getText();}
+	;
 repete
 @init {
 	int mark_list = 0;
@@ -156,13 +171,22 @@ procedure
 @init {
 	int mark_list = 0;
 }
-  	:	^(POUR a = ID ID* {mark_list = input.mark();} . ) {procedures.put($a.getText(), mark_list);}
+  	:	^(POUR a = ID {procedureName = $a.getText(); procedureVars.put(procedureName, new VarProcedureStorer());} arg_dec* {mark_list = input.mark();} . ) {procedures.put($a.getText(), mark_list);}
 	;
-exec	:	a = ID
+arg_dec	:	a = ID {procedureVars.get(procedureName).addVar($a.getText());}
+	;
+exec
+@init {
+	compteur = 1;
+}
+	:	^(a = ID {procedureName = $a.getText();} arg_exec*)
 		{
 			int mark_list = procedures.get($a.getText());
 			push(mark_list);
 			bloc();
 			pop();
 		}
+	;
+arg_exec:	x = expr {procedureVars.get(procedureName).initVar(compteur++, String.valueOf($x.v));}
+	|	s = chaine {procedureVars.get(procedureName).initVar(compteur++, $s.s);}
 	;
