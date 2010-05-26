@@ -8,11 +8,13 @@ options {
 	import logogui.Traceur;
 	import logogui.Log;
 	import java.util.HashMap;
+	import java.util.TreeMap;
 }
 @members {
 	Traceur traceur;
 	int level = 0;
 	HashMap<String,String> globalVars = new HashMap<String,String>();
+	TreeMap<String,Integer> procedures = new TreeMap<String,Integer>();
 	
 	public void initialize(java.awt.Graphics g) {
 		traceur = Traceur.getInstance();
@@ -80,6 +82,8 @@ instruction
 	|	LC {traceur.setTrace(false);}
 	|	BC {traceur.setTrace(true);}
 	|	VE {traceur.init();}
+	|	procedure
+	|	exec
 	;
 expr returns [double v]
 	:	^(OP_PLUS x=expr y=expr) {$v = $x.v + $y.v;}
@@ -146,5 +150,19 @@ si
 			bloc();
 			pop();
 		}
+		}
+	;
+procedure
+@init {
+	int mark_list = 0;
+}
+  	:	^(POUR a = ID ID* {mark_list = input.mark();} . ) {procedures.put($a.getText(), mark_list);}
+	;
+exec	:	a = ID
+		{
+			int mark_list = procedures.get($a.getText());
+			push(mark_list);
+			bloc();
+			pop();
 		}
 	;

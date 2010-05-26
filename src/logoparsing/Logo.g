@@ -87,6 +87,7 @@ instruction
 	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
 	|	ECRIS^ expr
 	|	procedure
+	|	exec
 	;
 expr	:	sumExpr
 	;
@@ -121,4 +122,6 @@ id_ecriture returns [String s]
 	;
 procedure
 	:	POUR ID id_lecture* liste_instructions FIN -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
+	;
+exec	:	ID
 	;
