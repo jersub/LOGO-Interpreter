@@ -55,6 +55,7 @@ tokens {
 		return valide;
 	}
 	TreeSet<String> vars = new TreeSet<String>();
+	TreeSet<String> procedures = new TreeSet<String>();
 }
 INT	:	('0'..'9')+;
 VRAI	:	'VRAI'|'vrai';
@@ -119,7 +120,7 @@ id_ecriture returns [String s]
 	:	'"'! a = ID {$s = $a.getText();}
 	;
 procedure
-	:	POUR ID id_lecture* liste_instructions FIN -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
+	:	POUR a = ID id_lecture* liste_instructions FIN {procedures.add($a.getText());} -> ^(POUR ID id_lecture* ^(BLOC liste_instructions))
 	;
-exec	:	ID
+exec	:	a = ID { if (!procedures.contains($a.getText())) {valide = false; Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");}}
 	;
