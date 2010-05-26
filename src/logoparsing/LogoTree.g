@@ -80,7 +80,6 @@ instruction
 	|	LC {traceur.setTrace(false);}
 	|	BC {traceur.setTrace(true);}
 	|	VE {traceur.init();}
-	|	^('TEST' b = exprBool) {Log.appendnl(Boolean.toString($b.v));}
 	;
 expr returns [double v]
 	:	^(OP_PLUS x=expr y=expr) {$v = $x.v + $y.v;}

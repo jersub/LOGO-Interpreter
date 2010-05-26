@@ -83,7 +83,6 @@ instruction
 	|	LC^
 	|	BC^
 	|	VE^
-	|	'TEST'^ exprBool
 	|	ECRIS chaine -> ^(ECRIS_CHAINE chaine)
 	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
 	|	ECRIS^ expr
