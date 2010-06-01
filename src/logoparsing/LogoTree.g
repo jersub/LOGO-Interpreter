@@ -8,21 +8,21 @@ options {
 	import logogui.Traceur;
 	import logogui.Log;
 	import java.util.HashMap;
-	import java.util.TreeMap;
+	import java.util.Map;
 }
 @members {
 	Traceur traceur;
 	int level = 0;
 	int compteur;
-	String procedureName;
+	Procedure currentProcedure;
 	String lastReturnValue;
 	HashMap<String,String> globalVars = new HashMap<String,String>();
-	TreeMap<String,Integer> procedures = new TreeMap<String,Integer>();
-	TreeMap<String,VarProcedureStorer> procedureVars = new TreeMap<String,VarProcedureStorer>();
+	Map<String,Procedure> procedures;
 	
-	public void initialize(java.awt.Graphics g) {
+	public void initialize(java.awt.Graphics g, Map<String,Procedure> procedures) {
 		traceur = Traceur.getInstance();
 		traceur.setGraphics(g);
+		this.procedures = procedures;
 	}
 	public void push(int index) {
 		((CommonTreeNodeStream)input).push(index);
@@ -58,13 +58,12 @@ scope {
 	$bloc::var = new HashMap<String,String>();
 	level++;
 	
-	if (procedureName != null) {
-		VarProcedureStorer s = procedureVars.get(procedureName);
-		for (String varName : s.getVarNames()) {
-			$bloc::var.put(varName, s.getValue(varName));
+	if (currentProcedure != null) {
+		for (String varName : currentProcedure.getVarNames()) {
+			$bloc::var.put(varName, currentProcedure.getValue(varName));
 		}
 		
-		procedureName = null;
+		currentProcedure = null;
 	}
 }
 @after {
@@ -177,19 +176,19 @@ procedure
 @init {
 	int mark_list = 0;
 }
-  	:	^(POUR a = ID {procedureName = $a.getText(); procedureVars.put(procedureName, new VarProcedureStorer());} arg_dec* {mark_list = input.mark();} . ) {procedures.put($a.getText(), mark_list);}
+  	:	^(POUR a = ID arg_dec* {mark_list = input.mark();} . ) {procedures.get($a.getText()).setIndex(mark_list);}
 	;
-arg_dec	:	a = ID {procedureVars.get(procedureName).addVar($a.getText());}
+arg_dec	:	a = ID 
 	;
 exec returns [String r]
 @init {
 	compteur = 1;
 	int mark_list = 0;
 }
-	:	^(a = ID {procedureName = $a.getText();} arg_exec* {mark_list = input.mark();})
+	:	^(a = ID {currentProcedure = procedures.get($a.getText());} arg_exec* {mark_list = input.mark();})
 		{
 			push(mark_list);
-			push(procedures.get($a.getText()));
+			push(currentProcedure.getIndex());
 			bloc();
 			if (lastReturnValue == null) {
 				pop();
@@ -201,8 +200,8 @@ exec returns [String r]
 			pop();
 		}
 	;
-arg_exec:	x = expr {procedureVars.get(procedureName).initVar(compteur++, String.valueOf($x.v));}
-	|	s = chaine {procedureVars.get(procedureName).initVar(compteur++, $s.s);}
+arg_exec:	x = expr {currentProcedure.initVar(compteur++, String.valueOf($x.v));}
+	|	s = chaine {currentProcedure.initVar(compteur++, $s.s);}
 	;
 ret	:	^(RET
 		(	x = expr {lastReturnValue = String.valueOf($x.v);}

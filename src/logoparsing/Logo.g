@@ -48,15 +48,25 @@ tokens {
 @header {
 	package logoparsing;
 	import java.util.TreeSet;
+	import java.util.TreeMap;
 	import logogui.Log;
 }
 @members {
 	boolean valide = true;
+	Procedure currentProcedure;
 	public boolean getValide(){
 		return valide;
 	}
+	public TreeMap<String,Procedure> getProcedures(){
+		return procedures;
+	}
+	private Procedure createProcedure(String procedureName) {
+		Procedure p = new Procedure(procedureName);
+		procedures.put(procedureName, p);
+		return p;
+	}
 	TreeSet<String> vars = new TreeSet<String>();
-	TreeSet<String> procedures = new TreeSet<String>();
+	TreeMap<String,Procedure> procedures = new TreeMap<String,Procedure>();
 }
 INT	:	('0'..'9')+;
 VRAI	:	'VRAI'|'vrai';
@@ -76,7 +86,15 @@ instruction
 	|	REPETE^ expr bloc
 	|	TANTQUE^ exprBool bloc
 	|	SI^ exprBool bloc bloc?
-	|	LOCALE^ a = id_ecriture {vars.add($a.s);}
+	|	LOCALE^ a = id_ecriture
+		{
+			if (currentProcedure.hasVar($a.s)) {
+				valide = false;
+				Log.appendnl("La variable "+$a.s+" est deja define en tant que parametre de la procedure "+currentProcedure.getName()+".");
+			} else {
+				vars.add($a.s);
+			}
+		}
 	|	DONNE^ a = id_ecriture expr {vars.add($a.s);}
 	|	( AV^ |	TD^ | TG^ | REC^ | FCAP^ ) expr
 	|	FPOS^ '['! expr expr ']'!
@@ -127,9 +145,26 @@ ecris	:	ECRIS^ (chaine|expr)
 	|	ECRIS id_lecture -> ^(ECRIS_VAR id_lecture)
 	;
 procedure
-	:	POUR a = ID (':' b = ID {vars.add($b.getText());})* {procedures.add($a.getText());} liste_instructions FIN -> ^(POUR ID ID* ^(BLOC liste_instructions))
+@after {
+	currentProcedure = null;
+}
+	:	POUR a = ID {currentProcedure = createProcedure($a.getText());}
+		(':' b = ID
+		{
+			String varName = $b.getText();
+			currentProcedure.addVar(varName);
+			vars.add(varName);
+		}
+		)* liste_instructions FIN
+		-> ^(POUR ID ID* ^(BLOC liste_instructions))
 	;
-exec	:	a = ID^ { if (!procedures.contains($a.getText())) {valide = false; Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");}}
+exec	:	a = ID^
+		{
+			if (!procedures.containsKey($a.getText())) {
+				valide = false;
+				Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");
+			}
+		}
 		((expr | id_lecture | chaine))*
 	;
 ret	:	RET^ (expr|chaine)
