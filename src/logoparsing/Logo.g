@@ -158,14 +158,26 @@ procedure
 		)* liste_instructions FIN
 		-> ^(POUR ID ID* ^(BLOC liste_instructions))
 	;
-exec	:	a = ID^
+exec
+@init {
+	int arite = 0;
+	Procedure p = null;
+}
+	:	a = ID^
 		{
-			if (!procedures.containsKey($a.getText())) {
+			p = procedures.get($a.getText());
+			if (p == null) {
 				valide = false;
 				Log.appendnl("La procedure "+$a.getText()+" n'a pas ete declaree.");
 			}
 		}
-		((expr | id_lecture | chaine))*
+		((expr | id_lecture | chaine) {arite++;})*
+		{
+			if (p.countParams() != arite) {
+				valide = false;
+				Log.appendnl("La procedure "+p.getName()+" doit etre appelee avec "+p.countParams()+" argument(s).");
+			}	
+		}
 	;
 ret	:	RET^ (expr|chaine)
 	;

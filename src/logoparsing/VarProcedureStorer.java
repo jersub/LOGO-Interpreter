@@ -51,4 +51,8 @@ class Procedure {
     public void setIndex(int index) {
         this.index = index;
     }
+
+    public int countParams() {
+        return indexMap.size();
+    }
 }
