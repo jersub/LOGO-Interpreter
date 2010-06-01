@@ -47,7 +47,6 @@ tokens {
 }
 @header {
 	package logoparsing;
-	import java.util.TreeSet;
 	import java.util.TreeMap;
 	import logogui.Log;
 }
@@ -60,12 +59,16 @@ tokens {
 	public TreeMap<String,Procedure> getProcedures(){
 		return procedures;
 	}
+	public TreeMap<String,String> getGlobalVars(){
+		return globalVars;
+	}
 	private Procedure createProcedure(String procedureName) {
 		Procedure p = new Procedure(procedureName);
 		procedures.put(procedureName, p);
 		return p;
 	}
-	TreeSet<String> vars = new TreeSet<String>();
+	TreeMap<String,String> globalVars = new TreeMap<String,String>();
+	TreeMap<String,String> localVars = new TreeMap<String,String>();
 	TreeMap<String,Procedure> procedures = new TreeMap<String,Procedure>();
 }
 INT	:	('0'..'9')+;
@@ -92,10 +95,15 @@ instruction
 				valide = false;
 				Log.appendnl("La variable "+$a.s+" est deja define en tant que parametre de la procedure "+currentProcedure.getName()+".");
 			} else {
-				vars.add($a.s);
+				localVars.put($a.s, "---");
 			}
 		}
-	|	DONNE^ a = id_ecriture expr {vars.add($a.s);}
+	|	DONNE^ a = id_ecriture expr
+		{
+			if (!localVars.containsKey($a.s)) {
+				globalVars.put($a.s, "---");
+			}
+		}
 	|	( AV^ |	TD^ | TG^ | REC^ | FCAP^ ) expr
 	|	FPOS^ '['! expr expr ']'!
 	|	FCC^ INT
@@ -136,7 +144,14 @@ atomBool:	VRAI
 chaine	:	'"' ID -> ^(CHAINE ID)
 	;
 id_lecture
-	:	':'! a = ID { if (!vars.contains($a.getText())) {valide = false; Log.appendnl("La variable "+$a.getText()+" n'a pas ete declaree.");}}
+	:	':'! a = ID
+		{
+			String varName = $a.getText();
+			if (!globalVars.containsKey(varName) && !localVars.containsKey(varName)) {
+				valide = false;
+				Log.appendnl("La variable "+varName+" n'a pas ete declaree.");
+			}
+		}
 	;
 id_ecriture returns [String s]
 	:	'"'! a = ID {$s = $a.getText();}
@@ -153,7 +168,7 @@ procedure
 		{
 			String varName = $b.getText();
 			currentProcedure.addVar(varName);
-			vars.add(varName);
+			localVars.put(varName, "---");
 		}
 		)* liste_instructions FIN
 		-> ^(POUR ID ID* ^(BLOC liste_instructions))

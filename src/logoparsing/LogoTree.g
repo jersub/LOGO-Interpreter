@@ -16,13 +16,14 @@ options {
 	int compteur;
 	Procedure currentProcedure;
 	String lastReturnValue;
-	HashMap<String,String> globalVars = new HashMap<String,String>();
+	Map<String,String> globalVars;
 	Map<String,Procedure> procedures;
 	
-	public void initialize(java.awt.Graphics g, Map<String,Procedure> procedures) {
+	public void initialize(java.awt.Graphics g, Map<String,Procedure> procedures, Map<String,String> globalVars) {
 		traceur = Traceur.getInstance();
 		traceur.setGraphics(g);
 		this.procedures = procedures;
+		this.globalVars = globalVars;
 	}
 	public void push(int index) {
 		((CommonTreeNodeStream)input).push(index);

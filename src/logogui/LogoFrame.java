@@ -296,7 +296,7 @@ public class LogoFrame extends JFrame {
 				   // tree walker
 				   CommonTreeNodeStream nodes = new CommonTreeNodeStream(parseTree);
 				   LogoTree treewalker = new LogoTree(nodes);
-				   treewalker.initialize(getJLogoPane().getGraphics(), parser.getProcedures());
+				   treewalker.initialize(getJLogoPane().getGraphics(), parser.getProcedures(), parser.getGlobalVars());
 				   treewalker.prog();
 			   } 
 		} catch(Exception ex) {
