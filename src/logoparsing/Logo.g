@@ -38,6 +38,7 @@ tokens {
 	SIN = 'SIN';
 	COS = 'COS';
 	POUR = 'POUR';
+	LOOP = 'LOOP';
 	FIN = 'FIN';
 	CHAINE;
 	RET = 'RET';
@@ -128,6 +129,7 @@ exprOu	:	exprEt (OP_OU^ exprEt)*
 exprEt	:	atomBool (OP_ET^ atomBool)*
 	;
 atom	:	id_lecture
+	|	LOOP
 	|	INT
 	|	'('! expr ')'!
 	|	exec

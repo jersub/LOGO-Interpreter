@@ -13,6 +13,7 @@ options {
 @members {
 	Traceur traceur;
 	int level = 0;
+	int compteurRepete = 0;
 	int compteur;
 	Procedure currentProcedure;
 	String lastReturnValue;
@@ -104,6 +105,7 @@ expr returns [double v]
 	|	^(OP_DIV x=expr y=expr) {$v = $x.v / $y.v;}
 	|	a = INT {$v = Double.parseDouble($a.getText());}
 	|	b = ID {$v = Double.parseDouble(value($b.getText()));}
+	|	d = LOOP {$v = (double) compteurRepete;}
 	|	r = exec {$v = Double.parseDouble($r.r);}
 	|	^(SQRT x = expr) {$v = Math.sqrt(x);}
 	|	^(COS x = expr) {$v = Math.cos(x);}
@@ -133,9 +135,12 @@ repete
 @init {
 	int mark_list = 0;
 }
+@after {
+	int compteurRepete = 0;
+}
   	:	^(REPETE a=expr {mark_list = input.mark();} . )
   		{
-  		for (int i = 0; i < $a.v ; i++) {
+  		for (compteurRepete = 1; compteurRepete <= $a.v ; compteurRepete++) {
 			push(mark_list);
 			bloc();
 			pop();
@@ -146,6 +151,10 @@ tantque
 @init {
 	int mark_cond = 0;
 	int mark_list = 0;
+	compteurRepete = 1;
+}
+@after {
+	int compteurRepete = 0;
 }
   	:	^(TANTQUE ({mark_cond = input.mark();} a=exprBool) {mark_list = input.mark();} . )
   		{
@@ -157,6 +166,7 @@ tantque
 			push(mark_cond);
 			b = exprBool();
 			pop();
+			compteurRepete++;
 		}
 		}
 	;
