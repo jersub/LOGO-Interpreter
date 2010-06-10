@@ -8,12 +8,14 @@ options {
 	import logogui.Traceur;
 	import logogui.Log;
 	import java.util.HashMap;
+	import java.util.ArrayList;
 	import java.util.Map;
 }
 @members {
 	Traceur traceur;
 	int level = 0;
-	int compteurRepete = 0;
+	ArrayList<Integer> compteurRepeteList = new ArrayList<Integer>();
+	int levelRepete = -1;
 	int compteur;
 	Procedure currentProcedure;
 	String lastReturnValue;
@@ -105,7 +107,7 @@ expr returns [double v]
 	|	^(OP_DIV x=expr y=expr) {$v = $x.v / $y.v;}
 	|	a = INT {$v = Double.parseDouble($a.getText());}
 	|	b = ID {$v = Double.parseDouble(value($b.getText()));}
-	|	d = LOOP {$v = (double) compteurRepete;}
+	|	d = LOOP {$v = (double) compteurRepeteList.get(levelRepete);}
 	|	r = exec {$v = Double.parseDouble($r.r);}
 	|	^(SQRT x = expr) {$v = Math.sqrt(x);}
 	|	^(COS x = expr) {$v = Math.cos(x);}
@@ -134,27 +136,30 @@ ecris	:	^(ECRIS
 repete
 @init {
 	int mark_list = 0;
+	levelRepete++;
 }
 @after {
-	int compteurRepete = 0;
+	levelRepete--;
 }
   	:	^(REPETE a=expr {mark_list = input.mark();} . )
   		{
-  		for (compteurRepete = 1; compteurRepete <= $a.v ; compteurRepete++) {
-			push(mark_list);
+  		for (int i = 1; i <= $a.v; i++) {
+  			compteurRepeteList.add(levelRepete, i);
+  			push(mark_list);
 			bloc();
 			pop();
-		}
+  		}
 		}
 	;
 tantque
 @init {
 	int mark_cond = 0;
 	int mark_list = 0;
-	compteurRepete = 1;
+	levelRepete++;
+	compteurRepeteList.add(levelRepete, 1);
 }
 @after {
-	int compteurRepete = 0;
+	levelRepete--;
 }
   	:	^(TANTQUE ({mark_cond = input.mark();} a=exprBool) {mark_list = input.mark();} . )
   		{
@@ -166,7 +171,7 @@ tantque
 			push(mark_cond);
 			b = exprBool();
 			pop();
-			compteurRepete++;
+			compteurRepeteList.add(levelRepete, compteurRepeteList.get(levelRepete)+1);
 		}
 		}
 	;
